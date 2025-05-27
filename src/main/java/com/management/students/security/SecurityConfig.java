@@ -38,8 +38,8 @@ public class SecurityConfig {
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-resources/**",
-                "/webjars/**").permitAll()
-		.requestMatchers(HttpMethod.GET,"/students/**").hasAnyRole("USER","ADMIN")
+                "/webjars/**","/students/**").permitAll()
+//		.requestMatchers(HttpMethod.GET,).hasAnyRole("USER","ADMIN")
 		.requestMatchers(HttpMethod.POST,"/students/**").hasAnyRole("ADMIN","USER")
 		.requestMatchers(HttpMethod.PUT,"/students/**").hasRole("ADMIN")
 		.requestMatchers(HttpMethod.DELETE,"/students/**").hasRole("ADMIN")
