@@ -1,7 +1,13 @@
 services:
  - type: web
    name: student-management-system-backend
-   env: java
-   buildCommand: "./mvnw clean install"
-   startCommand: "java -jar target/students-0.0.1-SNAPSHOT.jar"
+   runtime: docker
+   repo: https://github.com/Thavasiganesh/student-management
    plan: free
+   region: oregon
+   branch: main
+   dockerContext: .
+   dockerfilePath: Dockerfile
+   envVars:
+    - key: SPRING_PROFILES_ACTIVE
+      value: prod 
