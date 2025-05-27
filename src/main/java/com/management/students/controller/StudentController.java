@@ -68,28 +68,28 @@ public class StudentController {
 		
 	}
 //	
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping
 	public StudentPageResponse getAllStudents(@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="5") int size,@RequestParam(defaultValue="id") String sortBy,@RequestParam(defaultValue="asc") String direction){
 		logger.info("Retrieving all students in pages with a specific number of items sorted by specific field in asc or desc :{}",page,size,sortBy,direction);
 		return studentService.getAllStudents(page, size, sortBy, direction);
 	}
 //	
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getStudentById(@PathVariable Long id){
 		logger.info("Retrieving a specific student with id:{}",id);
 		return studentService.getStudentById(id);
 	}
 //	
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("/search/byName")
 	public List<StudentDTO> searchByName(@RequestParam String name){
 		logger.info("Retrieving students by their name:{}",name);
 		return studentService.searchByName(name);
 	}
 //	
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+//	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("/search/byDepartment")
 	public List<StudentDTO> searchByDepartment(@RequestParam String department){
 		logger.info("Retrieving students by their department:{}",department);
