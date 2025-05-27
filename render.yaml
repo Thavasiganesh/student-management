@@ -1,0 +1,7 @@
+services:
+ - type: web
+   name: student-management-system-backend
+   env: java
+   buildCommand: "./mvnw clean install"
+   startCommand: "java -jar target/students-0.0.1-SNAPSHOT.jar"
+   plan: free
