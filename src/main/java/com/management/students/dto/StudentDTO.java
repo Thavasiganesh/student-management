@@ -1,5 +1,6 @@
 package com.management.students.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -9,25 +10,37 @@ import com.management.students.entity.Department;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+
+
 public class StudentDTO {
-	@NotBlank(message="Name cannnot be empty")
+	
+
+	private Long id;
+	
 	private String name;
 	
-	@NotBlank(message="Provide a department")
-	private Department department;
-	
-	@Email(message="Provide a valid email")
+	private String departmentName;
 	private String email;
 	private String phone;
-	private Set<Course> courses;
-	public StudentDTO( String name,
-			 Department department,
-			 String email, String phone, Set<Course> courses) {
+	private LocalDate dob;
+	private int enrollmentYear;
+	private Set<String> courseNames;
+	public StudentDTO(Long id, String name, String departmentName, String email, String phone, LocalDate dob,
+			int enrollmentYear, Set<String> courseNames) {
+		this.id = id;
 		this.name = name;
-		this.department = department;
+		this.departmentName = departmentName;
 		this.email = email;
 		this.phone = phone;
-		this.courses = courses;
+		this.dob = dob;
+		this.enrollmentYear = enrollmentYear;
+		this.courseNames = courseNames;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	public String getName() {
 		return name;
@@ -35,11 +48,11 @@ public class StudentDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Department getDepartment() {
-		return department;
+	public String getDepartmentName() {
+		return departmentName;
 	}
-	public void setDepartment(Department department) {
-		this.department = department;
+	public void setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
 	}
 	public String getEmail() {
 		return email;
@@ -53,11 +66,24 @@ public class StudentDTO {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public Set<Course> getCourses() {
-		return courses;
+	public LocalDate getDob() {
+		return dob;
 	}
-	public void setCourses(Set<Course> courses) {
-		this.courses = courses;
+	public void setDob(LocalDate dob) {
+		this.dob = dob;
 	}
+	public int getEnrollmentYear() {
+		return enrollmentYear;
+	}
+	public void setEnrollmentYear(int enrollmentYear) {
+		this.enrollmentYear = enrollmentYear;
+	}
+	public Set<String> getCourseNames() {
+		return courseNames;
+	}
+	public void setCourseNames(Set<String> courseNames) {
+		this.courseNames = courseNames;
+	}
+	
 	
 }

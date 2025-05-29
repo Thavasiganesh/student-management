@@ -13,7 +13,7 @@ import com.management.students.entity.Student;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 	List<Student> findByNameContainingIgnoreCase(String name);
-	List<Student> findByDepartmentContainingIgnoreCase(String department);
+	List<Student> findByDepartmentNameContainingIgnoreCase(String department);
 	Page<Student> findByIsDeletedFalse(Pageable pages);
 	Optional<Student> findByIdAndIsDeletedFalse(Long id);
 }

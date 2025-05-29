@@ -12,15 +12,15 @@ import com.management.students.entity.Student;
 
 
 public interface StudentService {
-	Student addStudent(Student stud);
-	List<Student> addStudents(StudentsListWrapper listOfStuds);
+	StudentDTO addStudent(StudentDTO stud);
+	List<StudentDTO> addStudents(StudentsListWrapper listOfStuds);
 	ResponseEntity<String> deleteStudent(Long id);
 	StudentPageResponse getAllStudents(int page,int size,String sortBy,String direction);
 	ResponseEntity<?> getStudentById(Long id);
 
 	ResponseEntity<String> restoreDeletedStudent(Long id);
-	List<Student> searchByDepartment(String department);
-	List<Student> searchByName(String name);
+	List<StudentDTO> searchByDepartment(String department);
+	List<StudentDTO> searchByName(String name);
 	ResponseEntity<?> studentPartialUpdate(Long id,StudentPatchDTO stud);
 	
 }
