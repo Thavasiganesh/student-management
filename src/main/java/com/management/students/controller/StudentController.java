@@ -34,24 +34,18 @@ public class StudentController {
 	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PostMapping
-	public StudentDTO createStudent(@RequestBody @Valid StudentDTO student ) {
+	public Student createStudent(@RequestBody @Valid Student student ) {
 		logger.info("Adding a student:{}",student.getName());
 		return studentService.addStudent(student);
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/bulk")
-	public List<StudentDTO> addStudents(@RequestBody @Valid StudentsListWrapper studentsList){
+	public List<Student> addStudents(@RequestBody @Valid StudentsListWrapper studentsList){
 		logger.info("Adding multiple students:{}");
 		return studentService.addStudents(studentsList);
 	}
 //	
-	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping("/{id}")
-	public StudentDTO modifyStudent(@PathVariable Long id,@RequestBody @Valid  StudentDTO student) {
-		logger.info("Updating a student detail with id:{}",student.getName());
-		return studentService.modifyStudent(id, student);
-	}
 //	
 	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	@PatchMapping("/{id}")
@@ -84,14 +78,14 @@ public class StudentController {
 //	
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("/search/byName")
-	public List<StudentDTO> searchByName(@RequestParam String name){
+	public List<Student> searchByName(@RequestParam String name){
 		logger.info("Retrieving students by their name:{}",name);
 		return studentService.searchByName(name);
 	}
 //	
 	@PreAuthorize("hasAnyRole('USER','ADMIN')")
 	@GetMapping("/search/byDepartment")
-	public List<StudentDTO> searchByDepartment(@RequestParam String department){
+	public List<Student> searchByDepartment(@RequestParam String department){
 		logger.info("Retrieving students by their department:{}",department);
 		return studentService.searchByDepartment(department);
 	}

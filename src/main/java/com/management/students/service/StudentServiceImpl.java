@@ -18,6 +18,7 @@ import com.management.students.dto.StudentPageResponse;
 import com.management.students.dto.StudentPatchDTO;
 import com.management.students.dto.StudentsListWrapper;
 import com.management.students.entity.Student;
+import com.management.students.repository.DepartmentRepository;
 import com.management.students.repository.StudentRepository;
 
 import jakarta.validation.Valid;
@@ -29,28 +30,31 @@ public class StudentServiceImpl implements StudentService {
 	private StudentRepository studentRepository;
 	
 	@Autowired
-	private EmailService emailService; 
+	private EmailService emailService;
+	
+	@Autowired
+	private DepartmentRepository departmentRepository;
 
-	private Student convertToStudent(StudentDTO stud) {
-		Student s=new Student(stud.getName(),stud.getDepartment()
-				,stud.getEmail(),stud.getAge());
-		return s;
-	}
+//	private Student convertToStudent(StudentDTO stud) { 
+//		Student s=new Student(stud.getName(),stud.getDepartment()
+//				,stud.getEmail(),);
+//		return s;
+//	}
+//	
+//	private StudentDTO convertToStudentDTO(Student stud) {
+//		StudentDTO s=new StudentDTO(stud.getName(),stud.getDepartment()
+//				,stud.getEmail(),stud.getAge());
+//		return s;
+//	}
 	
-	private StudentDTO convertToStudentDTO(Student stud) {
-		StudentDTO s=new StudentDTO(stud.getName(),stud.getDepartment()
-				,stud.getEmail(),stud.getAge());
-		return s;
-	}
-	
-	private List<StudentDTO> convertListOfStudsToStudsDTO(List<Student> students){
-		List<StudentDTO> studs = new ArrayList<StudentDTO>();
-//		s.forEach(stud->convertToStudentDTO(stud).);
-		for(Student stud:students) {
-			studs.add(convertToStudentDTO(stud));
-		}
-		return studs;
-	}
+//	private List<StudentDTO> convertListOfStudsToStudsDTO(List<Student> students){
+//		List<StudentDTO> studs = new ArrayList<StudentDTO>();
+////		s.forEach(stud->convertToStudentDTO(stud).);
+//		for(Student stud:students) {
+//			studs.add(convertToStudentDTO(stud));
+//		}
+//		return studs;
+//	}
 	
 	@Override
 	public ResponseEntity<String> deleteStudent(Long id) {
@@ -83,8 +87,7 @@ public class StudentServiceImpl implements StudentService {
 		if(stud.isEmpty())
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student is not found with id "+id);
 		Student std=stud.get(); 
-		return ResponseEntity.ok(new StudentDTO(std.getName(),
-				std.getDepartment(),std.getEmail(),std.getAge()));
+		return ResponseEntity.ok(new StudentDTO(std.getName(),std.getDepartment(),std.getEmail(),std.getPhone(),std.getCourses()));
 	}
 
 	@Override
@@ -107,12 +110,12 @@ public class StudentServiceImpl implements StudentService {
 		Student std=optStud.get();
 		if(stud.getName()!=null)
 			std.setName(stud.getName());
-		if(stud.getAge()!=null)
-			std.setAge(stud.getAge());
-		if(stud.getDepartment()!=null)
-			std.setDepartment(stud.getDepartment());
+
 		if(stud.getEmail()!=null)
 			std.setEmail(stud.getEmail());
+		
+		if (stud.getPhone()!=null)
+			std.setPhone(stud.getPhone());
 		
 		studentRepository.save(std);
 		
@@ -120,55 +123,36 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public StudentDTO addStudent(StudentDTO stud) {
+	public Student addStudent(Student stud) {
 		// TODO Auto-generated method stub
 		
-		Student student=new Student(stud.getName(),stud.getDepartment()
-				,stud.getEmail(),stud.getAge());
-		studentRepository.save(student);
+		studentRepository.save(stud);
 		emailService.sendEmail(stud.getEmail(), "Student added", "Student "+stud.getName()+" was added");
-		return convertToStudentDTO(student);
+		return stud;
 	}
 
 	@Override
-	public List<StudentDTO> addStudents(StudentsListWrapper listOfStuds) {
+	public List<Student> addStudents(StudentsListWrapper listOfStuds) {
 		// TODO Auto-generated method stub
 		List<Student> s=listOfStuds.getStudents();
 		studentRepository.saveAll(s);
-		return convertListOfStudsToStudsDTO(s);
+		return s;
 	}
 
-	@Override
-	public StudentDTO modifyStudent(Long id, StudentDTO student) {
-		// TODO Auto-generated method stub
-		Optional<Student> stud=studentRepository.findById(id);
-		if(stud.isPresent()) {
-			Student std=stud.get();
-			std.setAge(student.getAge());
-			std.setDepartment(student.getDepartment());
-			std.setEmail(student.getEmail());
-			std.setName(student.getName());
-			studentRepository.save(std);
-			return  convertToStudentDTO(std);
-		}
-		else {
-			throw new RuntimeException("Student not found with id "+id);
-		}
-	}
 
 	@Override
-	public List<StudentDTO> searchByDepartment(String department) {
+	public List<Student> searchByDepartment(String department) {
 		// TODO Auto-generated method stub
 		List<Student> list=studentRepository.findByDepartmentContainingIgnoreCase(department);
-		return convertListOfStudsToStudsDTO(list);
+		return list;
 	}
 
 	@Override
-	public List<StudentDTO> searchByName(String name) {
+	public List<Student> searchByName(String name) {
 		// TODO Auto-generated method stub
 		List<Student> list=studentRepository.findByNameContainingIgnoreCase(name);
 		
-		return convertListOfStudsToStudsDTO(list);
+		return list;
 	}
 
 

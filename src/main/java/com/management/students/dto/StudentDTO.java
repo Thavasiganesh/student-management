@@ -1,36 +1,44 @@
 package com.management.students.dto;
 
+import java.util.List;
+import java.util.Set;
+
+import com.management.students.entity.Course;
+import com.management.students.entity.Department;
+
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 public class StudentDTO {
 	@NotBlank(message="Name cannnot be empty")
 	private String name;
+	
 	@NotBlank(message="Provide a department")
-	private String department;
+	private Department department;
+	
 	@Email(message="Provide a valid email")
 	private String email;
-	@Min(value=3,message="Age must be greater than 3")
-	private int age;
-	public StudentDTO(String name, String department, String email, int age) {
-
+	private String phone;
+	private Set<Course> courses;
+	public StudentDTO( String name,
+			 Department department,
+			 String email, String phone, Set<Course> courses) {
 		this.name = name;
 		this.department = department;
 		this.email = email;
-		this.age = age;
+		this.phone = phone;
+		this.courses = courses;
 	}
-
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getDepartment() {
+	public Department getDepartment() {
 		return department;
 	}
-	public void setDepartment(String department) {
+	public void setDepartment(Department department) {
 		this.department = department;
 	}
 	public String getEmail() {
@@ -39,10 +47,17 @@ public class StudentDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public int getAge() {
-		return age;
+	public String getPhone() {
+		return phone;
 	}
-	public void setAge(int age) {
-		this.age = age;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
+	public Set<Course> getCourses() {
+		return courses;
+	}
+	public void setCourses(Set<Course> courses) {
+		this.courses = courses;
+	}
+	
 }

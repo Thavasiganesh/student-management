@@ -8,18 +8,19 @@ import com.management.students.dto.StudentDTO;
 import com.management.students.dto.StudentPageResponse;
 import com.management.students.dto.StudentPatchDTO;
 import com.management.students.dto.StudentsListWrapper;
+import com.management.students.entity.Student;
 
 
 public interface StudentService {
-	StudentDTO addStudent(StudentDTO stud);
-	List<StudentDTO> addStudents(StudentsListWrapper listOfStuds);
+	Student addStudent(Student stud);
+	List<Student> addStudents(StudentsListWrapper listOfStuds);
 	ResponseEntity<String> deleteStudent(Long id);
 	StudentPageResponse getAllStudents(int page,int size,String sortBy,String direction);
 	ResponseEntity<?> getStudentById(Long id);
-	StudentDTO modifyStudent(Long id,StudentDTO student);
+
 	ResponseEntity<String> restoreDeletedStudent(Long id);
-	List<StudentDTO> searchByDepartment(String department);
-	List<StudentDTO> searchByName(String name);
+	List<Student> searchByDepartment(String department);
+	List<Student> searchByName(String name);
 	ResponseEntity<?> studentPartialUpdate(Long id,StudentPatchDTO stud);
 	
 }
