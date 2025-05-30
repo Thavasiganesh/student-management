@@ -6,6 +6,7 @@ public class CourseDTO {
 	private String code;
 	private String name;
 	private int credits;
+	private String description;
 	public Long getId() {
 		return id;
 	}
@@ -29,5 +30,11 @@ public class CourseDTO {
 	}
 	public void setCredits(int credits) {
 		this.credits = credits;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description=description;
 	}
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.management.students.entity.Course;
+import com.management.students.dto.CourseDTO;
 import com.management.students.service.CourseService;
 
 @RestController
@@ -16,22 +16,22 @@ public class CourseController {
 	private CourseService courseService;
 	
 	@GetMapping
-    public List<Course> getAllCourses() {
+    public List<CourseDTO> getAllCourses() {
         return courseService.getAllCourses();
     }
 
     @GetMapping("/{id}")
-    public Course getCourseById(@PathVariable Long id) {
+    public CourseDTO getCourseById(@PathVariable Long id) {
         return courseService.getCourseById(id);
     }
 
     @PostMapping("/department/{deptId}")
-    public Course createCourse(@RequestBody Course course, @PathVariable Long deptId) {
+    public CourseDTO createCourse(@RequestBody CourseDTO course, @PathVariable Long deptId) {
         return courseService.createCourse(course, deptId);
     }
 
     @PutMapping("/{id}")
-    public Course updateCourse(@PathVariable Long id, @RequestBody Course course) {
+    public CourseDTO updateCourse(@PathVariable Long id, @RequestBody CourseDTO course) {
         return courseService.updateCourse(id, course);
     }
 
