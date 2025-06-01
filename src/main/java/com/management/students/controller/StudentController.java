@@ -1,24 +1,18 @@
 package com.management.students.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 
 import com.management.students.dto.*;
-import com.management.students.entity.Student;
-import com.management.students.repository.StudentRepository;
+import com.management.students.service.CustomUserDetails;
 import com.management.students.service.StudentService;
 
 import jakarta.validation.Valid;
@@ -32,11 +26,11 @@ public class StudentController {
 	
 	private static final Logger logger=LoggerFactory.getLogger(StudentController.class);
 	
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PreAuthorize("hasAnyRole('ADMIN','STAFF','STUDENT')")
 	@PostMapping
-	public StudentDTO createStudent(@RequestBody @Valid StudentDTO student ) {
-		logger.info("Adding a student:{}",student.getName());
-		return studentService.addStudent(student);
+	public StudentDTO createStudent(@RequestBody @Valid ProfileDTO student,@AuthenticationPrincipal CustomUserDetails userDetails  ) {
+		logger.info("Creating a student profile:{}",userDetails.getUsername());
+		return studentService.addStudent(student,userDetails);
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
@@ -47,7 +41,7 @@ public class StudentController {
 	}
 //	
 //	
-	@PreAuthorize("hasAnyRole('ADMIN','USER')")
+	@PreAuthorize("hasAnyRole('ADMIN','STAFF','STUDENT')")
 	@PatchMapping("/{id}")
 	public ResponseEntity<?> studentPartialUpdate(@PathVariable Long id,@RequestBody  StudentPatchDTO stud){
 		logger.info("Updating a specific detail of a student with id:{}",stud.getName());
@@ -62,28 +56,28 @@ public class StudentController {
 		
 	}
 //	
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+	@PreAuthorize("hasAnyRole('STAFF','ADMIN')")
 	@GetMapping
 	public StudentPageResponse getAllStudents(@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="5") int size,@RequestParam(defaultValue="id") String sortBy,@RequestParam(defaultValue="asc") String direction){
 		logger.info("Retrieving all students in pages with a specific number of items sorted by specific field in asc or desc :{}",page,size,sortBy,direction);
 		return studentService.getAllStudents(page, size, sortBy, direction);
 	}
 //	
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+	@PreAuthorize("hasAnyRole('STAFF','ADMIN','STUDENT')")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getStudentById(@PathVariable Long id){
 		logger.info("Retrieving a specific student with id:{}",id);
 		return studentService.getStudentById(id);
 	}
 //	
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+	@PreAuthorize("hasAnyRole('STAFF','ADMIN')")
 	@GetMapping("/search/byName")
 	public List<StudentDTO> searchByName(@RequestParam String name){
 		logger.info("Retrieving students by their name:{}",name);
 		return studentService.searchByName(name);
 	}
 //	
-	@PreAuthorize("hasAnyRole('USER','ADMIN')")
+	@PreAuthorize("hasAnyRole('STAFF','ADMIN','STUDENT')")
 	@GetMapping("/search/byDepartment")
 	public List<StudentDTO> searchByDepartment(@RequestParam String department){
 		logger.info("Retrieving students by their department:{}",department);

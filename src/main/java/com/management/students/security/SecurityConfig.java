@@ -18,8 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.management.students.service.CustomUserDetailsService;
-@Configuration
+
 //@EnableWebSecurity
+@Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 	
@@ -38,10 +39,10 @@ public class SecurityConfig {
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-resources/**",
-                "/webjars/**","/students/**").permitAll()
-//		.requestMatchers(HttpMethod.GET,).hasAnyRole("USER","ADMIN")
-		.requestMatchers(HttpMethod.POST,"/students/**").hasAnyRole("ADMIN","USER")
-		.requestMatchers(HttpMethod.PUT,"/students/**").hasRole("ADMIN")
+                "/webjars/**").permitAll()
+		.requestMatchers(HttpMethod.GET,"/students/**").hasAnyRole("STAFF","ADMIN","STUDENT")
+		.requestMatchers(HttpMethod.POST,"/students/**").hasAnyRole("ADMIN","STAFF","STUDENT")
+		.requestMatchers(HttpMethod.PUT,"/students/**").hasAnyRole("ADMIN")
 		.requestMatchers(HttpMethod.DELETE,"/students/**").hasRole("ADMIN")
 		.anyRequest().authenticated())
 		.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -26,16 +26,16 @@ public class JWTService {
 	}
 	
 	
-	public String generateToken(String username) {
+	public String generateToken(String email) {
 		return Jwts.builder()
-				.setSubject(username)
+				.setSubject(email)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis()+expirationTime)).
 				signWith(getSigningKey(),SignatureAlgorithm.HS256).compact();
 				
 	}
 	
-	public String extractUsername(String token) {
+	public String extractEmail(String token) {
 		return extractClaim(token,Claims::getSubject);
 	}
 
@@ -46,9 +46,9 @@ public class JWTService {
 		return claimsResolver.apply(claims);
 	}
 	
-	public boolean isTokenValid(String token,String expectedUsername) {
-		final String username=extractUsername(token);
-		return (username.equals(expectedUsername) && ! isTokenExpired(token));
+	public boolean isTokenValid(String token,String expectedEmail) {
+		final String email=extractEmail(token);
+		return (email.equals(expectedEmail) && ! isTokenExpired(token));
 	}
 	
 	private boolean isTokenExpired(String token) {

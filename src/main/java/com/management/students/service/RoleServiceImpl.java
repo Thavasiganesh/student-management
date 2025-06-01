@@ -44,12 +44,5 @@ public class RoleServiceImpl implements RoleService {
 		roleDto.setName(role.getName());
 		return roleDto;
 	}
-	
-	private Role convertToEntity(RoleDTO roleDto) {
-		Role role=new Role();
-		role.setId(roleDto.getId());
-		role.setName(roleDto.getName());
-		return role;
-	}
 
 }

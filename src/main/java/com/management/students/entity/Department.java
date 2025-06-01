@@ -37,6 +37,14 @@ public class Department {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String getHeadOfDepartment() {
+		return headOfDepartment;
+	}
+
+	public void setHeadOfDepartment(String headOfDepartment) {
+		this.headOfDepartment = headOfDepartment;
+	}
 	
 
 

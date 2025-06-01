@@ -1,16 +1,7 @@
 package com.management.students.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
-
-import com.management.students.entity.Course;
-import com.management.students.entity.Department;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-
-
 
 public class StudentDTO {
 	
@@ -25,6 +16,7 @@ public class StudentDTO {
 	private LocalDate dob;
 	private int enrollmentYear;
 	private Set<String> courseNames;
+	public StudentDTO() {}
 	public StudentDTO(Long id, String name, String departmentName, String email, String phone, LocalDate dob,
 			int enrollmentYear, Set<String> courseNames) {
 		this.id = id;

@@ -1,9 +1,12 @@
 package com.management.students.dto;
 
+import com.management.students.entity.Role;
+
 public class UserDTO {
 	private String username;
+	private String email;
 	private String password;
-	private String role;
+	private Role role;
 	
 	public String getUsername() {
 		return username;
@@ -17,13 +20,16 @@ public class UserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
-	public void setRole(String role) {
-		if(role.equals("ROLE_ADMIN"))
-			this.role = "ROLE_ADMIN";
-		else
-			this.role="ROLE_USER";
+	public void setRole(Role role) {
+		this.role = role;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

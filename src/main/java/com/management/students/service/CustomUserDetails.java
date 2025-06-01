@@ -20,7 +20,7 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
-		return List.of(new SimpleGrantedAuthority(user.getRole()));
+		return List.of(new SimpleGrantedAuthority(user.getRole().getName()));
 	}
 
 	@Override
@@ -32,9 +32,9 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return user.getUserName();
+		return user.getEmail();
 	}
-
+	
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;

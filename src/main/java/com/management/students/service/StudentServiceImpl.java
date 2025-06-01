@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.management.students.dto.ProfileDTO;
 import com.management.students.dto.StudentDTO;
 import com.management.students.dto.StudentPageResponse;
 import com.management.students.dto.StudentPatchDTO;
@@ -20,12 +21,13 @@ import com.management.students.dto.StudentsListWrapper;
 import com.management.students.entity.Course;
 import com.management.students.entity.Department;
 import com.management.students.entity.Student;
+import com.management.students.entity.User;
 import com.management.students.exception.ResourceNotFoundException;
 import com.management.students.repository.CourseRepository;
 import com.management.students.repository.DepartmentRepository;
 import com.management.students.repository.StudentRepository;
+import com.management.students.repository.UserRepository;
 
-import jakarta.validation.Valid;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -39,13 +41,43 @@ public class StudentServiceImpl implements StudentService {
 	
 	private final CourseRepository courseRepository;
 	
+	private final UserRepository userRepository;
 
 	public StudentServiceImpl(StudentRepository studentRepository, DepartmentRepository departmentRepository,
-			CourseRepository courseRepository) {
+			CourseRepository courseRepository,UserRepository userRepository) {
 		this.studentRepository = studentRepository;
 		this.departmentRepository = departmentRepository;
 		this.courseRepository = courseRepository;
+		this.userRepository = userRepository;
 	}
+	
+	private Student convertToStudent(ProfileDTO stud,CustomUserDetails userDetails) {
+		User user=userRepository.findByUsername(userDetails.getUsername()).orElseThrow(()->new ResourceNotFoundException("User not registered with name "));
+		
+		Student s=new Student();
+		s.setName(user.getUsername());
+		s.setEmail(user.getEmail());
+		s.setDob(stud.getDob());
+		s.setEnrollmentYear(stud.getEnrollmentYear());
+		s.setPhone(stud.getPhone());
+		s.setUser(user);
+		Optional<Department> optDepartment=departmentRepository.findByName(stud.getDepartmentName());
+		if(optDepartment.isEmpty()) {
+			throw new ResourceNotFoundException("Department not found with name "+stud.getDepartmentName());
+		}
+		s.setDepartment(optDepartment.get());
+		if(stud.getCourseNames()!=null && !stud.getCourseNames().isEmpty()) {
+			Set<Course> courses=new HashSet<>();
+			for(String courseName:stud.getCourseNames()) {
+				Course course=courseRepository.findByCourseName(courseName).orElseThrow(()->new
+						ResourceNotFoundException("Course not found with name "+courseName));
+				courses.add(course);
+			}
+			s.setCourses(courses);
+		}
+		return s;
+	}
+	
 	private Student convertToStudent(StudentDTO stud) { 
 		
 		Student s=new Student();
@@ -157,11 +189,20 @@ public class StudentServiceImpl implements StudentService {
 		
 		return ResponseEntity.ok("Provided student details updated successfully");
 	}
-
-	@Override
+	
+	//Written only for StudentServiceTest purpose 
 	public StudentDTO addStudent(StudentDTO studDTO) {
 		// TODO Auto-generated method stub
 		Student stud=convertToStudent(studDTO);
+		studentRepository.save(stud);
+//		emailService.sendEmail(stud.getEmail(), "Student added", "Student "+stud.getName()+" was added");
+		return convertToStudentDTO(stud);
+	}
+
+	@Override
+	public StudentDTO addStudent(ProfileDTO studDTO,CustomUserDetails userDetails) {
+		// TODO Auto-generated method stub
+		Student stud=convertToStudent(studDTO,userDetails);
 		studentRepository.save(stud);
 		emailService.sendEmail(stud.getEmail(), "Student added", "Student "+stud.getName()+" was added");
 		return convertToStudentDTO(stud);
