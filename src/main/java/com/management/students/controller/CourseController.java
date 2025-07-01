@@ -19,7 +19,12 @@ public class CourseController {
     public List<CourseDTO> getAllCourses() {
         return courseService.getAllCourses();
     }
-
+	
+	@GetMapping(params="department")
+	public List<CourseDTO> getCoursesByDepartment(@RequestParam String department){
+		return courseService.getCoursesByDepartment(department);
+	}
+	
     @GetMapping("/{id}")
     public CourseDTO getCourseById(@PathVariable Long id) {
         return courseService.getCourseById(id);

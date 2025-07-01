@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.web.bind.annotation.*;
@@ -49,17 +51,22 @@ public class AuthController {
 	
 	
 	@PostMapping("/login")
-	public AuthResponse login(@RequestBody @Valid AuthRequest request) {
+	public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 		logger.info("Login attempt for user:{}",request.getEmail());
+		try{
 		authManager.authenticate(new UsernamePasswordAuthenticationToken(
 				request.getEmail(),request.getPassword()));
+		}
+		catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
+		}
 		String token = jwtService.generateToken(request.getEmail());
 		logger.info("Login successful for user:{}",request.getEmail());
-		return new AuthResponse(token);
+		return ResponseEntity.ok(new AuthResponse(token));
 	}
 	
 	@DeleteMapping("/{email}")
-	private ResponseEntity<String> delete(@PathVariable String email){
+	public ResponseEntity<String> delete(@PathVariable String email){
 		Optional<User> user=userRepository.findByEmail(email);
 		if(user.isEmpty())
 			return ResponseEntity.notFound().build();

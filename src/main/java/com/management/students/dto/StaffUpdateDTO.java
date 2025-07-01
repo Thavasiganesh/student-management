@@ -1,33 +1,27 @@
 package com.management.students.dto;
 
-import jakarta.validation.constraints.*;
+public class StaffUpdateDTO {
 
-public class StudentPatchDTO {
-	
-	@NotBlank(message="Name cannot be empty")
 	private String name;
-
-	@Email(message="Invalid Email format")
-	private String email;
-	private String phone;
-	private Long id;
 	
-	public StudentPatchDTO(String name, String email, String phone) {
-		this.name = name;
-		this.email = email;
-		this.phone = phone;
-	}
+	private String email;
+	
+	private String phone;
+	
+	private String department;
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -35,14 +29,19 @@ public class StudentPatchDTO {
 	public String getPhone() {
 		return phone;
 	}
+
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public long getId() {
-		// TODO Auto-generated method stub
-		return id;
+
+	public String getDepartment() {
+		return department;
 	}
-	public void setId(long id) {
-		this.id=id;
+
+	public void setDepartment(String department) {
+		this.department = department;
 	}
+	
+	
 }
+

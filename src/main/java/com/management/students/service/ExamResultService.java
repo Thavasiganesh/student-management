@@ -3,6 +3,7 @@ package com.management.students.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.management.students.entity.Exam;
@@ -52,5 +53,11 @@ public class ExamResultService {
     public List<ExamResult> getResultsByExam(Long examId) {
         return examResultRepository.findByExamId(examId);
     }
+
+	public ResponseEntity<String> deleteExamsByExamId(Long examId) {
+		// TODO Auto-generated method stub
+		examResultRepository.deleteByExamId(examId);
+		return ResponseEntity.ok("Exams deleted successfully");
+	}
 
 }

@@ -3,14 +3,17 @@ package com.management.students.service;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import com.management.students.entity.User;
 
 public class CustomUserDetails implements UserDetails {
 
+	
 	private User user;
 	
 	public CustomUserDetails(User user) {
@@ -33,6 +36,10 @@ public class CustomUserDetails implements UserDetails {
 	public String getUsername() {
 		// TODO Auto-generated method stub
 		return user.getEmail();
+	}
+	
+	public boolean getRole(String role) {
+		return user.getRole().equals(role);
 	}
 	
 	@Override

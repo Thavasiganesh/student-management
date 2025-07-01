@@ -1,5 +1,7 @@
 package com.management.students.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -15,9 +17,11 @@ public class Staff {
 	
 	private String phone;
 	
-	private String role;
+	private LocalDate dob;
 	
-	@OneToOne
+	private LocalDate joiningDate;
+	
+	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="user_id")
 	private User user;
 	
@@ -57,12 +61,22 @@ public class Staff {
 		this.phone = phone;
 	}
 
-	public String getRole() {
-		return role;
+
+
+	public LocalDate getDob() {
+		return dob;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setDob(LocalDate dob) {
+		this.dob = dob;
+	}
+
+	public LocalDate getJoiningDate() {
+		return joiningDate;
+	}
+
+	public void setJoiningDate(LocalDate joiningDate) {
+		this.joiningDate = joiningDate;
 	}
 
 	public User getUser() {

@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.management.students.entity.Exam;
@@ -18,12 +19,14 @@ public class ExamController {
 	@Autowired
     private ExamService examService;
 
+	@PreAuthorize("hasRole('STAFF')")
     @PostMapping
     public ResponseEntity<Exam> scheduleExam(@RequestBody Exam dto) {
         Exam exam = examService.scheduleExam(dto);
         return new ResponseEntity<>(exam, HttpStatus.CREATED);
     }
 
+	
     @GetMapping
     public List<Exam> getAll() {
         return examService.getAllExams();

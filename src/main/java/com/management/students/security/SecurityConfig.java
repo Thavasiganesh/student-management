@@ -16,11 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.management.students.service.CustomUserDetailsService;
 
-//@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 	
@@ -32,7 +34,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		return http.csrf().disable().authorizeHttpRequests(auth->auth
+		return http.cors().and().csrf().disable().authorizeHttpRequests(auth->auth
 				
 		.requestMatchers("/auth/**",
                 "/swagger-ui.html",
@@ -40,24 +42,47 @@ public class SecurityConfig {
                 "/v3/api-docs/**",
                 "/swagger-resources/**",
                 "/webjars/**").permitAll()
-		.requestMatchers(HttpMethod.GET,"/students/**").hasAnyRole("STAFF","ADMIN","STUDENT")
-		.requestMatchers(HttpMethod.POST,"/students/**").hasAnyRole("ADMIN","STAFF","STUDENT")
-		.requestMatchers(HttpMethod.PUT,"/students/**").hasAnyRole("ADMIN")
-		.requestMatchers(HttpMethod.DELETE,"/students/**").hasRole("ADMIN")
+		.requestMatchers(HttpMethod.GET,"/students/me").hasRole("STUDENT")
+		.requestMatchers(HttpMethod.GET,"/students/**").hasAnyRole("STAFF","ADMIN")
+		.requestMatchers(HttpMethod.GET,"/students/{id}/courses").hasRole("STUDENT")
+		.requestMatchers(HttpMethod.PATCH,"/students/{id}").hasAnyRole("STUDENT","ADMIN")
+		.requestMatchers(HttpMethod.PATCH,"/students/restore/**").hasRole("ADMIN")
+		.requestMatchers(HttpMethod.POST,"/students/bulk").hasRole("ADMIN")
+		.requestMatchers(HttpMethod.POST,"/students").hasRole("STUDENT")
+		.requestMatchers(HttpMethod.POST,"/students/{id}/courses").hasAnyRole("STUDENT","ADMIN")
+		.requestMatchers(HttpMethod.DELETE,"/students/**").hasAnyRole("ADMIN","STUDENT")
+		.requestMatchers("/staffs/**").hasAnyRole("STAFF","ADMIN")
+		.requestMatchers(HttpMethod.GET,"/staffs/{id}").hasAnyRole("STAFF","ADMIN","STUDENT")
+		.requestMatchers("/roles/**").hasRole("ADMIN")
+		.requestMatchers(HttpMethod.POST,"/exam-results/**").hasRole("STAFF")
+		.requestMatchers(HttpMethod.GET,"/exam-results").hasRole("STAFF")
+		.requestMatchers(HttpMethod.GET,"/exam-results/student/{studentId}").hasRole("STUDENT")
+		.requestMatchers(HttpMethod.GET,"/exam-results/exam/{examId}").hasAnyRole("STAFF","STUDENT")
+		.requestMatchers(HttpMethod.DELETE,"/exam-results/**").hasRole("STAFF")
 		.anyRequest().authenticated())
 		.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-		.userDetailsService(userDetailsService).addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
+		.authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
 		.build();
 	}
 	
-//	@Bean
-//	public AuthenticationProvider authenticationProvider() {
-//		// TODO Auto-generated method stub
-//		DaoAuthenticationProvider authProvider=new DaoAuthenticationProvider();
-//		authProvider.setUserDetailsService(userDetailsService);
-//		authProvider.setPasswordEncoder(passwordEncoder());
-//		return authProvider;
-//	}
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowedMethods("*").allowedHeaders("*").allowCredentials(true);
+			}
+		};
+	}
+	
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		// TODO Auto-generated method stub
+		DaoAuthenticationProvider authProvider=new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(userDetailsService);
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return authProvider;
+	}
 
 	@Bean 
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{

@@ -77,4 +77,18 @@ public class CourseServiceImpl implements CourseService {
 		courseDto.setDescription(course.getDescription());
 		return courseDto;
 	}
+
+	@Override
+	public List<CourseDTO> getCoursesByDepartment(String departmentName) {
+		// TODO Auto-generated method stub
+		Optional<Department> departmentId=departmentRepository.findByName(departmentName);
+		if(departmentId.isEmpty())
+			throw new ResourceNotFoundException("Department not found.");
+		List<Course> courses=courseRepository.findByDepartmentId(departmentId.get().getId());
+		List<CourseDTO> coursesDTO=new ArrayList<CourseDTO>();
+		for(Course course:courses) {
+			coursesDTO.add( convertToDTO(course));
+		}
+		return coursesDTO;
+	}
 }

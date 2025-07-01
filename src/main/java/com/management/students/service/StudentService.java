@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import com.management.students.dto.CourseDTO;
 import com.management.students.dto.ProfileDTO;
 import com.management.students.dto.StudentDTO;
 import com.management.students.dto.StudentPageResponse;
@@ -18,10 +19,12 @@ public interface StudentService {
 	ResponseEntity<String> deleteStudent(Long id);
 	StudentPageResponse getAllStudents(int page,int size,String sortBy,String direction);
 	ResponseEntity<?> getStudentById(Long id);
-
+	void enrollInCourses(Long id,List<Long> courseIds);
+	List<CourseDTO> getAllCourses(Long id);
 	ResponseEntity<String> restoreDeletedStudent(Long id);
 	List<StudentDTO> searchByDepartment(String department);
 	List<StudentDTO> searchByName(String name);
-	ResponseEntity<?> studentPartialUpdate(Long id,StudentPatchDTO stud);
+	ResponseEntity<?> studentPartialUpdate(Long id,StudentPatchDTO stud, CustomUserDetails userDetails);
+	ResponseEntity<?> checkStudentProfile(CustomUserDetails userDetails);
 	
 }

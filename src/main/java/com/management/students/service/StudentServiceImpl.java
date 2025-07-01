@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.management.students.dto.CourseDTO;
 import com.management.students.dto.ProfileDTO;
 import com.management.students.dto.StudentDTO;
 import com.management.students.dto.StudentPageResponse;
@@ -20,8 +21,10 @@ import com.management.students.dto.StudentPatchDTO;
 import com.management.students.dto.StudentsListWrapper;
 import com.management.students.entity.Course;
 import com.management.students.entity.Department;
+import com.management.students.entity.Role;
 import com.management.students.entity.Student;
 import com.management.students.entity.User;
+import com.management.students.exception.AccessDeniedException;
 import com.management.students.exception.ResourceNotFoundException;
 import com.management.students.repository.CourseRepository;
 import com.management.students.repository.DepartmentRepository;
@@ -52,7 +55,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 	
 	private Student convertToStudent(ProfileDTO stud,CustomUserDetails userDetails) {
-		User user=userRepository.findByUsername(userDetails.getUsername()).orElseThrow(()->new ResourceNotFoundException("User not registered with name "));
+		User user=userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()->new ResourceNotFoundException("User not registered with name "));
 		
 		Student s=new Student();
 		s.setName(user.getUsername());
@@ -132,8 +135,8 @@ public class StudentServiceImpl implements StudentService {
 		Student std=deletedStd.get();
 		std.setIsDeleted(true);
 		studentRepository.save(std);
-		emailService.sendEmail(std.getEmail(), "Student deleted from the system", "Student "+std.getName()+" was deleted");
-		return ResponseEntity.ok("Student deleted successfully");
+		emailService.sendEmail(std.getEmail(), "Student profile deleted from the system", "Student "+std.getName()+" was deleted");
+		return ResponseEntity.ok("Student profile deleted successfully");
 	}
 
 	@Override
@@ -169,22 +172,34 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public ResponseEntity<?> studentPartialUpdate(Long id, StudentPatchDTO stud) {
+	public ResponseEntity<?> studentPartialUpdate(Long id, StudentPatchDTO stud, CustomUserDetails userDetails) {
 		// TODO Auto-generated method stub
+		if(userDetails.getRole("STUDENT") && !Objects.equals(id,stud.getId() )) {
+			throw new AccessDeniedException("You can only edit your own profile");
+		}
 		Optional<Student> optStud=studentRepository.findById(id);
 		if(optStud.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Student not found with id "+id);
 		}
+		
 		Student std=optStud.get();
-		if(stud.getName()!=null)
+		Optional<User> optUser=userRepository.findByUsername(std.getName()); 
+		User user=optUser.get();
+		if(stud.getName()!=null) {
 			std.setName(stud.getName());
+			user.setUsername(stud.getName());
+		}
 
-		if(stud.getEmail()!=null)
+		if(stud.getEmail()!=null) {
 			std.setEmail(stud.getEmail());
+			user.setEmail(stud.getEmail());
+		}
 		
-		if (stud.getPhone()!=null)
+		if (stud.getPhone()!=null) {
 			std.setPhone(stud.getPhone());
+		}
 		
+		userRepository.save(user);
 		studentRepository.save(std);
 		
 		return ResponseEntity.ok("Provided student details updated successfully");
@@ -213,6 +228,19 @@ public class StudentServiceImpl implements StudentService {
 		// TODO Auto-generated method stub
 		List<Student> s=listOfStuds.getStudents();
 		studentRepository.saveAll(s);
+		
+		Role role=new Role();
+		role.setId((long) 3);
+		role.setName("ROLE_STUDENT");
+		for(Student stud:s) {
+			User user=new User();
+			user.setEmail(stud.getEmail());
+			user.setPassword(stud.getDob().toString());
+			user.setUsername(stud.getName());
+			user.setRole(role);
+			userRepository.save(user);
+		}
+		
 		return convertListOfStudsToStudsDTO(s);
 	}
 
@@ -234,6 +262,40 @@ public class StudentServiceImpl implements StudentService {
 		List<Student> list=studentRepository.findByNameContainingIgnoreCase(name);
 		
 		return convertListOfStudsToStudsDTO(list);
+	}
+
+	@Override
+	public void enrollInCourses(Long id, List<Long> courseIds) {
+		// TODO Auto-generated method stub
+		Student student=studentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Student not found"));
+		List<Course> courses=courseRepository.findAllById(courseIds);
+		student.getCourses().addAll(courses);
+		studentRepository.save(student);
+	}
+
+	@Override
+	public List<CourseDTO> getAllCourses(Long id) {
+		// TODO Auto-generated method stub
+		Student student=studentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Student not found"));
+		Set<Course> courses=student.getCourses();
+		List<CourseDTO> resultCourses=new ArrayList<CourseDTO>();
+		for(Course course: courses) {
+			CourseDTO courseDTO=new CourseDTO();
+			courseDTO.setId(course.getId());
+			courseDTO.setName(course.getCourseName());
+			courseDTO.setCode(course.getCourseCode());
+			courseDTO.setCredits(course.getCredits());
+			courseDTO.setDescription(course.getDescription());
+			resultCourses.add(courseDTO);
+		}
+		return resultCourses;
+	}
+
+	@Override
+	public ResponseEntity<?> checkStudentProfile(CustomUserDetails userDetails) {
+		// TODO Auto-generated method stub
+		Optional<Student> student=studentRepository.findByEmail(userDetails.getUsername());
+		return ResponseEntity.ok(Map.of("hasProfile", student.isPresent()));
 	}
 
 

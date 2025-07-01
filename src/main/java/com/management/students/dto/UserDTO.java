@@ -1,12 +1,10 @@
 package com.management.students.dto;
 
-import com.management.students.entity.Role;
-
 public class UserDTO {
 	private String username;
 	private String email;
 	private String password;
-	private Role role;
+	private String roleId;
 	
 	public String getUsername() {
 		return username;
@@ -20,11 +18,11 @@ public class UserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public Role getRole() {
-		return role;
+	public String getRoleId() {
+		return roleId;
 	}
-	public void setRole(Role role) {
-		this.role = role;
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
 	}
 	public String getEmail() {
 		return email;

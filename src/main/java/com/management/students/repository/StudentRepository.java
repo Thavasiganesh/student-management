@@ -16,4 +16,5 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 	List<Student> findByDepartmentNameContainingIgnoreCase(String department);
 	Page<Student> findByIsDeletedFalse(Pageable pages);
 	Optional<Student> findByIdAndIsDeletedFalse(Long id);
+	Optional<Student> findByEmail(String username);
 }

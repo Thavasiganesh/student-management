@@ -4,8 +4,11 @@ import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.management.students.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -14,6 +17,10 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JWTService {
+	
+	
+	@Autowired
+	private UserRepository userRepository; 
 	
 	@Value("${jwt.secret}")
 	private String secretKey;
@@ -29,6 +36,7 @@ public class JWTService {
 	public String generateToken(String email) {
 		return Jwts.builder()
 				.setSubject(email)
+				.claim("role", userRepository.findByEmail(email).get().getRole().getName())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis()+expirationTime)).
 				signWith(getSigningKey(),SignatureAlgorithm.HS256).compact();
