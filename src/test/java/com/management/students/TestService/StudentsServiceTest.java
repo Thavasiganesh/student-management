@@ -39,8 +39,8 @@ public class StudentsServiceTest {
 		student.setEnrollmentYear(2021);
 		student.setPhone("9543395034");
 		Department department=new Department();
-		department.setName("MCA");
-		department.setHeadOfDepartment("Rajesh");
+		department.setName("Computer Applications");
+		department.setHeadOfDepartment("Saraswathy");
 		student.setDepartment(department);
 		
 		Mockito.when(studentRepository.save(Mockito.any(Student.class))).thenReturn(student);
